@@ -30,6 +30,37 @@
         color: white;
         text-decoration: none;
         border-radius: 5px;
+        transition: background 0.3s ease-in-out;
+    }
+    .button:hover {
+        background: #0056b3;
+    }
+    .projects {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+    .project-card {
+        background: white;
+        padding: 15px;
+        border-radius: 5px;
+        box-shadow: 0 0 5px rgba(0,0,0,0.1);
+        width: calc(33.33% - 20px);
+        min-width: 200px;
+        text-align: center;
+    }
+    @media (max-width: 600px) {
+        .container {
+            width: 90%;
+            padding: 15px;
+        }
+        h1 {
+            font-size: 24px;
+        }
+        .project-card {
+            width: 100%;
+        }
     }
 </style>
 <body>
@@ -38,6 +69,25 @@
         <p>Saya seorang programmer yang sedang membangun karir di dunia coding</p>
         <h2>My skill:</h2>
         <p>Python, html, css, Js</p>
+        <h2>My Project:</h2>
+        <div class="projects">
+            <div class="project-card">
+                <h3>Project 1</h3>
+                <p>Test</p>
+            </div>
+            <div class="project-card">
+                <h3>Project 2</h3>
+                <p>Test</p>
+            </div>
+            <div class="project-card">
+                <h3>Project 3</h3>
+                <p>Test</p>
+            </div>
+            <div class="project-card">
+                <h3>Project 4</h3>
+                <p>Test</p>
+            </div>
+        </div>
         <h2>Personal Contact:</h2>
         <a href="https://github.com/Radit0" class="button">GitHub</a>
         <a href="https://wa.me/+6283821121078" class="button">WhatsApp</a>
