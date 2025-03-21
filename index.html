@@ -4,23 +4,185 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Portofolio</title>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script src="script/emailjs.js" defer></script>
+    <script>
+        emailjs.init("public_PcGd7MeUfiVLuNN71");
+    </script>
 </head>
 <style>
+    :root {
+        --primary-color: #007bff;
+        --text-color: #333;
+        --background-color: #fff;
+        --container-bg: #f0f0f0;
+    }
+    .dark {
+        --primary-color: #222;
+        --text-color: #fff;
+        --background-color: #000;
+        --container-bg: #333;
+    }
     body {
         font-family: arial, sans-serif;
         text-align: center;
-        background-color: #f4f4f4;
+        background-color: var(--background-color);
+        color: var(--text-color);
+        transition: background 0.3s ease-in-out, color 0.3s ease-in-out;
+        padding: 70px;
+    }
+    h1 {
+        color: var(--text-color);
+    }
+    #deskripsi {
+        height: 30px;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    #darkmode {
+        background: none;
+        border: none;
+        font-size: 1.5em;
+        font-size: 20px;
+        cursor: pointer;
+        color: white;
+        transition: transform 0.3s ease;
+        padding: 5px 10px;
+    }
+    #darkmode:hover {
+        transform: scale(1.1)
+    }
+    input, textarea {
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+    button {
+        background: var(--primary-color);
+        color: white;
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    button:hover {
+        background: #0056b3;
+    }
+    .error-message {
+        color: red;
+        font-size: 0.8em;
+        display: none;
+    }
+    .navbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        background: var(--primary-color);
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 20px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        z-index: 1000;
+        height: 60px;
+        line-height: 50px;
+    }
+    .logo {
+        font-size: 1.5em;
+        font-weight: bold;
+        margin-right: auto;
+        cursor: default;
+    }
+    .menu-icon {
+        display: none;
+        font-size: 24px;
+        cursor: pointer;
+    }
+    .nav-links {
+        list-style: none;
+        display: flex;
+        gap: 20px;
+        padding: 0;
+        margin: 0;
+    }
+    .nav-links li {
+        display: inline;
+    }
+    .nav-links a {
+        position: relative;
+        text-decoration: none;
+        color: white;
+        font-weight: bold;
+        padding: 10px 15px;
+        border-radius: 5px;
+        transition: color 0.3s ease;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 40px;
+    }
+    .nav-links a::before {
+        content: "";
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: -100%; 
+        background: rgba(255, 255, 255, 0.3);
+        transition: left 0.3s ease-in-out;
+        z-index: -1;
+    }
+    .nav-links a:hover::before {
+        left: 0;
+    }
+    .nav-links a:hover {
+        color: #ddd;
+    }
+    .dark .nav-links {
+        color: white;
+    }
+    .nav-wrapper {
+        flex-grow: 1;
+        display: flex;
+        justify-content: center;
+    }
+    .toggle-container {
+        position: absolute;
+        right: 80px;
+        top: 50%;
+        display: flex;
+        transform: translateY(-50%);
+        align-items: center;
+        gap: 10px;
+        background: none;
+        border: none;
+        font-size: 1.5em;
+        cursor: pointer;
+        color: white;
     }
     .container {
         max-width: 800px;
-        margin: 50px auto;
-        background: white;
+        margin: 70px auto 50px auto;
+        background: var(--container-bg);
         padding: 20px;
         border-radius: 10px;
         box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
-    h1 {
-        color: #333;
+    .fade-in {
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+    }
+    .fade-in.show {
+        opacity: 1;
+        transform: translateY(0);
     }
     .button {
         display: inline-block;
@@ -30,10 +192,11 @@
         color: white;
         text-decoration: none;
         border-radius: 5px;
-        transition: background 0.3s ease-in-out;
+        transition: background 0.3s ease-in-out, transform 0.3s ease;
     }
     .button:hover {
         background: #0056b3;
+        transform: scale(1.1);
     }
     .projects {
         display: flex;
@@ -42,13 +205,76 @@
         gap: 20px;
     }
     .project-card {
-        background: white;
+        background: var(--container-bg);
+        color: var(--text-color);
         padding: 15px;
         border-radius: 5px;
         box-shadow: 0 0 5px rgba(0,0,0,0.1);
         width: calc(33.33% - 20px);
         min-width: 200px;
         text-align: center;
+        display: flex;
+        flex-direction: column;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .project-card:hover {
+        transform: translateY(-10px) scale(1.05);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    }
+    .dark .project-card {
+        background: #444;
+        color: white;
+        box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+    }
+    .hidden {
+        opacity: 0;
+        transform: translateY(30px);
+        transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+    .show {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    @keyframes fadeIn {
+        0% {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        100% {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .element {
+        animation: fadeIn 1s ease-out forwards;
+    }
+    @media (max-width: 768px) {
+        .navbar {
+            flex-direction: column;
+        }
+        .nav-links{
+            display: none;
+            flex-direction: column;
+            background-color: var(--primary-color);
+            position: absolute;
+            top: 60px;
+            right: 0;
+            gap: 10px;
+            width: 200px;
+            padding: 10px;
+        }
+        .nav-links.show{
+            display: flex;
+        }
+        .menu-icon {
+            display: block;
+            font-size: 2em;
+            cursor: pointer;
+        }
+        .toggle-container {
+            margin-top: 10px;
+        }
     }
     @media (max-width: 600px) {
         .container {
@@ -65,32 +291,236 @@
 </style>
 <body>
     <div class="container">
-        <h1>Hi, i'm Radit</h1>
-        <p>Saya seorang programmer yang sedang membangun karir di dunia coding</p>
+        <header class="navbar">
+        <div class="logo">Radit's Portofolio</div>
+        <nav class="nav-wrapper">
+            <ul class="nav-links">
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Project</a></li>
+                <li><a href="#">About</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+            <div class="toggle-container">
+            <button id="darkmode">🌙</button>
+            </div>
+        </nav>
+        </header>
+        <h1 class="element">Welcome!</h1>
+        <h1 id="judul" class="fade-in hidden">Hi, I'm Radit</h1>
+        <p id="deskripsi" class="fade-in hidden"></p>
         <h2>My skill:</h2>
-        <p>Python, html, css, Js</p>
+        <p>Python, HTML, CSS, JavaScript</p>
         <h2>My Project:</h2>
         <div class="projects">
-            <div class="project-card">
+            <div class="project-card fade-in">
                 <h3>Project 1</h3>
-                <p>Test</p>
+                <p>Unknown project</p>
             </div>
-            <div class="project-card">
+            <div class="project-card fade-in">
                 <h3>Project 2</h3>
-                <p>Test</p>
+                <p>Unknown project</p>
             </div>
-            <div class="project-card">
+            <div class="project-card fade-in">
                 <h3>Project 3</h3>
-                <p>Test</p>
+                <p>Unknown project</p>
             </div>
-            <div class="project-card">
+            <div class="project-card fade-in">
                 <h3>Project 4</h3>
-                <p>Test</p>
+                <p>Unknown project</p>
             </div>
         </div>
-        <h2>Personal Contact:</h2>
-        <a href="https://github.com/Radit0" class="button">GitHub</a>
-        <a href="https://wa.me/+6283821121078" class="button">WhatsApp</a>
+        <a href="#" id="togglewarna" class="button">Ubah Warna</a>
+        <h2>Contact Me:</h2>
+        <form id="contactForm">
+            <label for="name">Name:</label>
+            <input type="text" name="name" id="name" required>
+            <small class="error-message" id="nameError"></small>
+
+            <label for="email">Email:</label>
+            <input type="email" name="email" id="email" required>
+            <small class="error-message" id="emailError"></small>
+
+            <label for="message">Message:</label>
+            <textarea name="message" id="message" rows="4" required></textarea>
+            <small class="error-message" id="messageError"></small>
+
+            <button type="submit">Send Message</button>
+        </form>
     </div>
+    <script>
+        document.getElementById("judul").textContent = "";
+
+        let name = "RDT";
+        let jurusan = "RPL";
+        console.log(name);
+        console.log(jurusan);
+
+        for (let i = 1; i <= 5; i++) {
+            console.log("Perulangan ke: " + i);
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            let fadeElements = document.querySelectorAll('.fade-in');
+
+            fadeElements.forEach((el, index) => {
+                setTimeout(() => {
+                    el.classList.add('show');
+                }, index * 300);
+            });
+        });
+
+        let Berubah = false;
+        function ubahwarna() {
+            if (Berubah) {
+                document.body.style.backgroundColor = "#f4f4f4"; 
+            } else {
+                document.body.style.backgroundColor = "lightgreen";
+            }
+            Berubah = !Berubah;
+        }
+        document.getElementById("togglewarna").addEventListener("click", ubahwarna);
+
+        const hiddenElements = document.querySelectorAll('.hidden');
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('show');
+                }
+            });
+        }, { threshold: 0.3 });
+
+        hiddenElements.forEach(el => observer.observe(el));
+        
+        document.addEventListener("DOMContentLoaded", function () {
+            const root = document.documentElement;
+            const toggleDarkMode = document.getElementById("darkmode");
+            let Gelap = false;
+
+            if (localStorage.getItem("Gelap") === "true") {
+                Gelap = true;
+                root.classList.add("dark")
+                toggleDarkMode.textContent = "☀️";
+            } else {
+                toggleDarkMode.textContent = "🌙";
+            }
+
+            toggleDarkMode.addEventListener("click", () => {
+                Gelap = !Gelap;
+                if (Gelap) {
+                    root.classList.add("dark")
+                    toggleDarkMode.textContent = "☀️";
+                    localStorage.setItem("Gelap", "true")
+                } else {
+                    root.classList.remove("dark")
+                    toggleDarkMode.textContent = "🌙";
+                    localStorage.setItem("Gelap", "false")
+                }
+            });
+        const menuIcon = document.querySelector(".menu-icon");
+        const navLinks = document.querySelector(".nav-links");
+
+        menuIcon.addEventListener("click", () => {
+            navLinks.classList.toggle("show")
+            });
+        });
+
+        function typeEffect(element, text, speed, callback) {
+            let i = 0;
+
+            function typing() {
+                if (i < text.length) {
+                    element.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(typing, speed);
+                } else if (callback){
+                    setTimeout(callback, 1000);
+                }
+            }
+
+        typing();
+
+    }
+
+    function erasingEffect(element, speed, callback) {
+            let text = element.innerHTML;
+            let i = text.length;
+
+            function erasing() {
+                if (i >= 0) {
+                    element.innerHTML = text.substring(0, i);
+                    i--;
+                    setTimeout(erasing, speed);
+                } else if (callback) {
+                    setTimeout(callback, 500);
+                }
+            }
+
+            erasing();
+        }
+
+        function typeEffectLoop(element, texts, speed, delay) {
+            let index = 0;
+            
+            function nextText() {
+                typeEffect(element, texts[index], speed, function () {
+                    setTimeout(() => {
+                        erasingEffect(element, speed / 2, function () {
+                            index = (index + 1) % texts.length;
+                            setTimeout(nextText, delay);
+                        });
+                    }, 2000);
+                });
+            }
+
+            nextText();
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            let judulElement = document.getElementById("judul");
+            let deskripsiElement = document.getElementById("deskripsi");
+
+            if (judulElement && deskripsiElement) {
+                typeEffect(judulElement, "Hi, im Radit", 100, function () {
+                    typeEffectLoop(deskripsiElement, [
+                        "Saya seorang programmer yang sedang membangun karir di dunia coding",
+                        "Saya ingin menjadi seperti timothy",
+                        "Saya siap dengan segala konsekuensi"
+                    ], 50, 500);
+                });
+            }
+        });
+        document.addEventListener("DOMContentLoaded", function () {
+    emailjs.init("wePGaT9l8-3MrGRFR"); // Ganti dengan Public Key EmailJS kamu
+
+    document.getElementById("contactForm").addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        let name = document.getElementById("name").value.trim();
+        let email = document.getElementById("email").value.trim();
+        let message = document.getElementById("message").value.trim();
+
+        if (!name || !email.includes("@") || !message) {
+            alert("Please fill in all fields correctly.");
+            return;
+        }
+
+        emailjs.send("service_r6v38vk", "template_1g8r2dn", {
+            from_name: name,
+            from_email: email,
+            reply_to: email,
+            message: message
+        })
+        .then(response => {
+            console.log("✅ Message sent:", response);
+            alert("Message sent successfully!");
+            document.getElementById("contactForm").reset();
+        })
+        .catch(error => {
+            console.error("❌ EmailJS Error:", error);
+            alert("Failed to send message. Check console for details.");
+        });
+    });
+});
+    </script>
 </body>
 </html>
